@@ -1,14 +1,40 @@
 body {
   font-family: Arial, sans-serif;
+  background: #f4f6f8;
   padding: 10px;
-  width: 250px;
+  width: 320px;
 }
 
-h1 {
-  font-size: 16px;
+.oferta {
+  display: flex;
+  align-items: center;
+  background: white;
   margin-bottom: 10px;
+  border-radius: 8px;
+  padding: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
 }
 
-#results {
+.oferta img {
+  width: 32px;
+  height: 32px;
+  margin-right: 10px;
+  border-radius: 4px;
+  background: #eee;
+}
+
+.oferta .info {
+  flex: 1;
   font-size: 14px;
+}
+
+.oferta .preco {
+  color: #2e7d32;
+  font-weight: bold;
+}
+
+.oferta a {
+  font-size: 12px;
+  color: #1a73e8;
+  text-decoration: none;
 }

@@ -8,12 +8,18 @@
     "scripting",
     "tabs"
   ],
+  "host_permissions": [
+    "https://api.isthereanydeal.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
-      "16": "icon.png",
-      "48": "icon.png",
-      "128": "icon.png"
+      "16": "icons/icon.png",
+      "48": "icons/icon.png",
+      "128": "icons/icon.png"
     }
   },
   "content_scripts": [
@@ -22,8 +28,13 @@
         "*://store.steampowered.com/app/*"
       ],
       "js": [
-        "content.js"
-      ]
+        "content.js",
+        "inject-button.js"
+      ],
+      "run_at": "document_idle"
     }
-  ]
+  ],
+  "api_key": {
+    "API_KEY": "ae0c88d2cc4a4abe683f2a32fa59566d926ec34f"
+  }
 }
