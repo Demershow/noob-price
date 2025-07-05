@@ -12,16 +12,19 @@ function abrirModalComPopup() {
     right: '20px',
     width: '420px',
     height: '550px',
-    backgroundColor: 'white',
-    borderRadius: '10px',
-    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
+    background: 'linear-gradient(135deg, #1e1e2f, #2a2a3d)',
+    border: '2px solid #4b5563',
+    borderRadius: '12px',
+    boxShadow: '0 0 18px rgba(0, 0, 0, 0.6)',
     zIndex: 999999,
     overflowY: 'auto',
-    fontFamily: 'Segoe UI, sans-serif',
+    fontFamily: 'Segoe UI, Tahoma, sans-serif',
     padding: '20px',
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    color: '#e5e7eb'
   });
+
 
   const fechar = document.createElement('button');
   fechar.textContent = '×';
@@ -29,22 +32,27 @@ function abrirModalComPopup() {
     position: 'absolute',
     top: '10px',
     right: '14px',
-    fontSize: '20px',
+    fontSize: '22px',
     background: 'transparent',
     border: 'none',
-    color: '#888',
-    cursor: 'pointer'
+    color: '#9ca3af',
+    cursor: 'pointer',
+    fontWeight: 'bold',
+    transition: 'color 0.2s'
   });
+  fechar.onmouseover = () => fechar.style.color = '#f87171';
+  fechar.onmouseout = () => fechar.style.color = '#9ca3af';
   fechar.onclick = () => container.remove();
 
   const header = document.createElement('div');
   header.id = 'modal-header';
   header.innerHTML = `
-    <h2 style="margin: 5px; font-size: 20px; display: flex; align-items: center; gap: 12px;">
-      <img src="${chrome.runtime.getURL('icons/icon.png')}" style="width: 24px; height: 24px"> NoobPrice
-      <span id="game-title" style="font-weight: normal; font-size: 16px; margin-left: auto; color: #555"></span>
-    </h2>
-    <hr style="margin: 12px 0; border: none; border-top: 1px solid #eee">
+   <h2 style="margin: 5px; font-size: 20px; display: flex; align-items: center; gap: 12px; color: #93c5fd;">
+  <img src="${chrome.runtime.getURL('icons/icon.png')}" style="width: 26px; height: 26px"> NoobPrice
+  <span id="game-title" style="font-weight: normal; font-size: 15px; margin-left: auto; color: #facc15;"></span>
+</h2>
+<hr style="margin: 12px 0; border: none; border-top: 1px solid #4b5563">
+
   `;
 
   const resultsDiv = document.createElement('div');
@@ -66,6 +74,7 @@ function adicionarBotaoComparar() {
   const precoElement = precos[0];
   if (precoElement.dataset.noobpriceAdded) return;
 
+  const body = document.querySelector('body');
   const botao = document.createElement('button');
   botao.textContent = '🔍 Comparar com NoobPrice';
   Object.assign(botao.style, {
@@ -85,7 +94,7 @@ function adicionarBotaoComparar() {
 }
 
 window.addEventListener('load', () => {
-  setTimeout(adicionarBotaoComparar, 1000);
+  setTimeout(() => { abrirModalComPopup(), adicionarBotaoComparar() }, 1000);
 });
 
 async function buscarOfertasSteam() {
@@ -155,19 +164,48 @@ async function buscarOfertasSteam() {
         const icon = storeIconMap[oferta.shop.name] || 'unknown';
         const iconUrl = chrome.runtime.getURL(`icons/${icon}.png`);
 
-
         return `
-          <div class="oferta" style="margin-bottom:14px; padding:10px; background:#f9f9f9; border-radius:8px; display:flex; align-items:center; gap:12px;">
-            <img src="${iconUrl}" alt="${oferta.shop.name}" width="32" height="32" style="flex-shrink:0">
-            <div style="flex:1">
-              <strong>${oferta.shop.name}</strong><br>
-              <span class="preco">R$ ${preco} <s style="color:#888">R$ ${precoAntigo}</s> <strong style="color:#16a34a">(${desconto}% OFF)</strong></span>
-            </div>
-            <a href="${oferta.url}" target="_blank" style="background:#3b82f6; color:white; padding:6px 10px; border-radius:4px; text-decoration:none; font-size:12px">Ver</a>
+      <div class="oferta" style="
+        background: linear-gradient(135deg, #1e1e2f, #2c2c3f);
+        border: 1px solid #3f3f5a;
+        border-radius: 10px;
+        padding: 12px 14px;
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+        color: #fff;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      ">
+        <img src="${iconUrl}" alt="${oferta.shop.name}" width="36" height="36" style="flex-shrink:0; border-radius:6px; background:#fff; padding:2px;">
+        
+        <div style="flex: 1">
+          <div style="font-size: 14px; font-weight: 600; color: #93c5fd;">${oferta.shop.name}</div>
+          <div style="margin-top: 4px; font-size: 13px;">
+            <span style="color: #22c55e; font-weight: bold;">R$ ${preco}</span>
+            <s style="color:#888; margin-left:6px;">R$ ${precoAntigo}</s>
+            <span style="margin-left:8px; color:#facc15; font-weight:bold;">-${desconto}%</span>
           </div>
-        `;
+        </div>
+
+        <a href="${oferta.url}" target="_blank" style="
+          background: #9333ea;
+          padding: 8px 12px;
+          border-radius: 6px;
+          color: white;
+          text-decoration: none;
+          font-size: 12px;
+          font-weight: bold;
+          transition: background 0.3s;
+        " onmouseover="this.style.background='#7e22ce'" onmouseout="this.style.background='#9333ea'">
+          Ver
+        </a>
+      </div>
+    `;
       })
       .join('');
+
 
     resultsDiv.innerHTML = html || "Sem promoções ativas no momento.";
 
