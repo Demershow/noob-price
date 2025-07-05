@@ -33,8 +33,5 @@
       ],
       "run_at": "document_idle"
     }
-  ],
-  "api_key": {
-    "API_KEY": "ae0c88d2cc4a4abe683f2a32fa59566d926ec34f"
-  }
+  ]
 }
