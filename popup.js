@@ -1,6 +1,4 @@
 
-const API_KEY = "ae0c88d2cc4a4abe683f2a32fa59566d926ec34f"
-
 document.addEventListener('DOMContentLoaded', async () => {
   const resultsDiv = document.getElementById("results");
 
@@ -14,7 +12,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }, async (injectionResults) => {
     const nomeDoJogo = injectionResults[0].result;
-    console.log("Nome do jogo extraído:", nomeDoJogo);
 
     if (!nomeDoJogo) {
       resultsDiv.textContent = "Jogo não detectado.";
@@ -32,7 +29,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
 
       const dados = await buscarOfertas(plain);
-      console.log(dados);
 
 
       if (!dados || !Array.isArray(dados) || dados.length === 0) {
@@ -105,12 +101,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function buscarPlain(nome) {
-  const url = new URL('https://api.isthereanydeal.com/games/search/v1');
-  url.searchParams.append('key', API_KEY);
+  const url = new URL('http://localhost:3000/api/search');
   url.searchParams.append('title', nome);
-  url.searchParams.append('results', '1');
-
-  console.log("Buscando jogo na URL:", url.toString());
 
   const res = await fetch(url.toString());
   if (!res.ok) {
@@ -119,10 +111,8 @@ async function buscarPlain(nome) {
   }
 
   const json = await res.json();
-  console.log("Resposta da ITAD:", json);
 
   const jogo = json[0]
-  console.log("Jogo encontrado:", jogo);
 
   return jogo?.id || null;
 }

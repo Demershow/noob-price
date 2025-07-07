@@ -1,6 +1,4 @@
 
-const API_KEY = "ae0c88d2cc4a4abe683f2a32fa59566d926ec34f"
-
 function abrirModalComPopup() {
   if (document.getElementById('noobprice-modal')) return;
 
@@ -218,10 +216,8 @@ async function buscarOfertasSteam() {
 }
 
 async function buscarPlain(nome) {
-  const url = new URL('https://api.isthereanydeal.com/games/search/v1');
-  url.searchParams.append('key', API_KEY);
+  const url = new URL('http://localhost:3000/api/search');
   url.searchParams.append('title', nome);
-  url.searchParams.append('results', '1');
 
   const res = await fetch(url.toString());
   if (!res.ok) {

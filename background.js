@@ -1,17 +1,14 @@
 
-const API_KEY = "ae0c88d2cc4a4abe683f2a32fa59566d926ec34f"
-
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === 'buscarOfertas') {
     const plain = request.plain;
-    const reqBody = [plain]
 
-    fetch(`https://api.isthereanydeal.com/games/prices/v3?key=${API_KEY}&country=BR`, {
-      method: 'POST',
+
+    fetch(`http://localhost:3000/api/deals?plain=${plain}`, {
+      method: 'GET',
       headers: {
         'Content-type': "application/json"
       },
-      body: JSON.stringify(reqBody)
     })
       .then(res => res.json())
       .then(data => {
