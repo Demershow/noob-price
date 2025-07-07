@@ -29,15 +29,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     chrome.action.setBadgeText({ text: '!' });
     chrome.action.setBadgeBackgroundColor({ color: '#f43f5e' });
 
-    chrome.action.setIcon({
-      path: {
-        "16": "icons/epicgames.png",
-        "32": "icons/epicgames.png",
-        "48": "icons/epicgames.png",
-        "128": "icons/epicgames.png"
-      }
-    });
-
     setTimeout(() => {
       chrome.action.setBadgeText({ text: '' });
       chrome.action.setIcon({

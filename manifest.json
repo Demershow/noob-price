@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "NoobPrice",
   "version": "1.0",
-  "description": "Compare preços de jogos automaticamente entre lojas como Steam, Epic e Nuuvem!",
+  "description": "Compare preços de jogos da Steam automaticamente!",
   "permissions": [
     "activeTab",
     "scripting",
