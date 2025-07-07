@@ -151,7 +151,9 @@ async function buscarOfertasSteam() {
       "GamesPlanet DE": "gamesplanet",
       "IndieGala Store": "indiegala",
       "Fanatical": "fanatical",
-      "Nuuvem": "nuuvem"
+      "Nuuvem": "nuuvem",
+      "WinGameStore": "wingamestore",
+      "2game": "2game"
     };
 
     const html = ofertas

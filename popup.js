@@ -71,7 +71,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             "GamesPlanet DE": "gamesplanet",
             "IndieGala Store": "indiegala",
             "Fanatical": "fanatical",
-            "Nuuvem": "nuuvem"
+            "Nuuvem": "nuuvem",
+            "WinGameStore": "wingamestore",
+            "2game": "2game"
           };
 
           const icon = storeIconMap[oferta.shop.name] || 'unknown';
