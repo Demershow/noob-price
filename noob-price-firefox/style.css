@@ -192,3 +192,27 @@ body::-webkit-scrollbar-thumb:hover {
 .btn-mostrar-mais:hover {
   background: #4b5563;
 }
+
+.popup-footer {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid #4b5563;
+  text-align: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.popup-apoie,
+.popup-feedback {
+  font-size: 12px;
+  color: #93c5fd;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.popup-apoie:hover,
+.popup-feedback:hover {
+  color: #facc15;
+}

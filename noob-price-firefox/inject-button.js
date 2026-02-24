@@ -1,5 +1,6 @@
 // Detecção universal no início
 const browserAPI = typeof browser !== 'undefined' ? browser : chrome;
+const NOOBPRICE_ICONS_BASE = 'https://noob-price.vercel.app';
 
 function abrirModalComPopup() {
   if (document.getElementById('noobprice-modal')) return;
@@ -28,6 +29,7 @@ function abrirModalComPopup() {
   });
 
   const fechar = document.createElement('button');
+  fechar.setAttribute('aria-label', 'Fechar modal');
   fechar.textContent = '×';
   Object.assign(fechar.style, {
     position: 'absolute',
@@ -48,7 +50,7 @@ function abrirModalComPopup() {
   const header = document.createElement('div');
   header.id = 'modal-header';
   header.style.paddingRight = '20px';
-  const iconUrl = browserAPI.runtime.getURL('icons/icon.png');
+  const iconUrl = browserAPI.runtime.getURL('icon-48.png');
   header.innerHTML = `
     <h2 style="margin:0; font-size:20px; font-weight:600; display:flex; align-items:center; gap:12px; color:#93c5fd;">
       <img src="${iconUrl}" style="width:26px; height:26px; border-radius:6px"> NoobPrice
@@ -59,11 +61,25 @@ function abrirModalComPopup() {
 
   const resultsDiv = document.createElement('div');
   resultsDiv.id = 'results';
-  resultsDiv.textContent = 'Buscando ofertas...';
+  resultsDiv.setAttribute('aria-busy', 'true');
+  resultsDiv.innerHTML = '<div class="noobprice-skeleton" style="display:flex;flex-direction:column;gap:12px;"><div style="display:flex;align-items:center;gap:14px;padding:14px 16px;margin-bottom:12px;background:linear-gradient(135deg,#1e1e2f,#2c2c3f);border:1px solid #3f3f5a;border-radius:12px;"><div style="width:40px;height:40px;border-radius:8px;background:#3f3f5a;"></div><div style="flex:1;"><div style="height:14px;width:60%;margin-bottom:8px;border-radius:4px;background:#3f3f5a;"></div><div style="height:12px;width:40%;border-radius:4px;background:#3f3f5a;"></div></div></div><div style="display:flex;align-items:center;gap:14px;padding:14px 16px;margin-bottom:12px;background:linear-gradient(135deg,#1e1e2f,#2c2c3f);border:1px solid #3f3f5a;border-radius:12px;"><div style="width:40px;height:40px;border-radius:8px;background:#3f3f5a;"></div><div style="flex:1;"><div style="height:14px;width:55%;margin-bottom:8px;border-radius:4px;background:#3f3f5a;"></div><div style="height:12px;width:35%;border-radius:4px;background:#3f3f5a;"></div></div></div><div style="display:flex;align-items:center;gap:14px;padding:14px 16px;margin-bottom:12px;background:linear-gradient(135deg,#1e1e2f,#2c2c3f);border:1px solid #3f3f5a;border-radius:12px;"><div style="width:40px;height:40px;border-radius:8px;background:#3f3f5a;"></div><div style="flex:1;"><div style="height:14px;width:50%;margin-bottom:8px;border-radius:4px;background:#3f3f5a;"></div><div style="height:12px;width:45%;border-radius:4px;background:#3f3f5a;"></div></div></div><div style="margin-top:16px;height:120px;border-radius:12px;background:#3f3f5a;"></div></div>';
 
   const chartWrap = document.createElement('div');
   chartWrap.id = 'noobprice-chart';
   chartWrap.style.cssText = 'margin-top:16px; min-height:120px;';
+
+  const footer = document.createElement('div');
+  footer.style.cssText = 'margin-top:28px; padding-top:16px; border-top:1px solid #4b5563; text-align:center;';
+  const apoieLink = document.createElement('a');
+  apoieLink.href = 'https://noob-price.vercel.app/apoie';
+  apoieLink.target = '_blank';
+  apoieLink.rel = 'noopener noreferrer';
+  apoieLink.setAttribute('aria-label', 'Apoie o projeto NoobPrice');
+  apoieLink.textContent = 'Apoie o projeto';
+  apoieLink.style.cssText = 'font-size:12px; color:#93c5fd; text-decoration:none;';
+  apoieLink.onmouseover = () => { apoieLink.style.color = '#facc15'; };
+  apoieLink.onmouseout = () => { apoieLink.style.color = '#93c5fd'; };
+  footer.appendChild(apoieLink);
 
   const styleEl = document.createElement('style');
   styleEl.textContent = '#noobprice-modal .noobprice-oferta:last-child{margin-bottom:0} #noobprice-modal .noobprice-ofertas-restante .noobprice-oferta:last-child{margin-bottom:0} #noobprice-modal .noobprice-oferta:hover{border-color:rgba(79,63,90,0.9);box-shadow:0 4px 16px rgba(0,0,0,0.3)}';
@@ -72,6 +88,7 @@ function abrirModalComPopup() {
   container.appendChild(header);
   container.appendChild(resultsDiv);
   container.appendChild(chartWrap);
+  container.appendChild(footer);
 
   document.body.appendChild(container);
 
@@ -86,6 +103,7 @@ function adicionarBotaoComparar() {
 
   const body = document.querySelector('body');
   const botao = document.createElement('button');
+  botao.setAttribute('aria-label', 'Comparar preços com NoobPrice');
   botao.textContent = '🔍 Comparar com NoobPrice';
   Object.assign(botao.style, {
     marginLeft: '10px',
@@ -140,9 +158,14 @@ async function buscarOfertasSteam() {
     return;
   }
 
-  resultsDiv.textContent = `Buscando ofertas reais para: ${nomeDoJogo}...`;
+const skeletonHtml = `<div class="noobprice-skeleton" aria-busy="true" aria-label="Carregando ofertas">
+    <div style="display:flex;align-items:center;gap:14px;padding:14px 16px;margin-bottom:12px;background:linear-gradient(135deg,#1e1e2f,#2c2c3f);border:1px solid #3f3f5a;border-radius:12px;"><div style="width:40px;height:40px;border-radius:8px;background:linear-gradient(90deg,#3f3f5a 25%,#4b5563 50%,#3f3f5a 75%);background-size:200% 100%;animation:noobprice-shimmer 1.2s ease-in-out infinite;"></div><div style="flex:1;"><div style="height:14px;width:60%;margin-bottom:8px;border-radius:4px;background:linear-gradient(90deg,#3f3f5a 25%,#4b5563 50%,#3f3f5a 75%);background-size:200% 100%;animation:noobprice-shimmer 1.2s ease-in-out infinite;"></div><div style="height:12px;width:40%;border-radius:4px;background:linear-gradient(90deg,#3f3f5a 25%,#4b5563 50%,#3f3f5a 75%);background-size:200% 100%;animation:noobprice-shimmer 1.2s ease-in-out infinite;"></div></div><div style="width:70px;height:32px;border-radius:8px;background:#3f3f5a;"></div></div>
+    <div style="display:flex;align-items:center;gap:14px;padding:14px 16px;margin-bottom:12px;background:linear-gradient(135deg,#1e1e2f,#2c2c3f);border:1px solid #3f3f5a;border-radius:12px;"><div style="width:40px;height:40px;border-radius:8px;background:linear-gradient(90deg,#3f3f5a 25%,#4b5563 50%,#3f3f5a 75%);background-size:200% 100%;animation:noobprice-shimmer 1.2s ease-in-out infinite;"></div><div style="flex:1;"><div style="height:14px;width:55%;margin-bottom:8px;border-radius:4px;background:linear-gradient(90deg,#3f3f5a 25%,#4b5563 50%,#3f3f5a 75%);background-size:200% 100%;animation:noobprice-shimmer 1.2s ease-in-out infinite;"></div><div style="height:12px;width:35%;border-radius:4px;background:linear-gradient(90deg,#3f3f5a 25%,#4b5563 50%,#3f3f5a 75%);background-size:200% 100%;animation:noobprice-shimmer 1.2s ease-in-out infinite;"></div></div></div><div style="display:flex;align-items:center;gap:14px;padding:14px 16px;margin-bottom:12px;background:linear-gradient(135deg,#1e1e2f,#2c2c3f);border:1px solid #3f3f5a;border-radius:12px;"><div style="width:40px;height:40px;border-radius:8px;background:linear-gradient(90deg,#3f3f5a 25%,#4b5563 50%,#3f3f5a 75%);background-size:200% 100%;animation:noobprice-shimmer 1.2s ease-in-out infinite;"></div><div style="flex:1;"><div style="height:14px;width:50%;margin-bottom:8px;border-radius:4px;background:linear-gradient(90deg,#3f3f5a 25%,#4b5563 50%,#3f3f5a 75%);background-size:200% 100%;animation:noobprice-shimmer 1.2s ease-in-out infinite;"></div><div style="height:12px;width:45%;border-radius:4px;background:linear-gradient(90deg,#3f3f5a 25%,#4b5563 50%,#3f3f5a 75%);background-size:200% 100%;animation:noobprice-shimmer 1.2s ease-in-out infinite;"></div></div></div>
+    <div style="margin-top:16px;height:120px;border-radius:12px;background:linear-gradient(90deg,#3f3f5a 25%,#4b5563 50%,#3f3f5a 75%);background-size:200% 100%;animation:noobprice-shimmer 1.2s ease-in-out infinite;"></div>
+  </div><style>@keyframes noobprice-shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}</style>`;
+  resultsDiv.innerHTML = skeletonHtml;
 
-  try {
+    try {
     const plain = await buscarPlainViaBackground(nomeDoJogo);
 
     if (!plain) {
@@ -150,17 +173,29 @@ async function buscarOfertasSteam() {
       return;
     }
 
-    const dados = await buscarOfertas(plain);
+    const response = await buscarOfertas(plain);
+    const dados = response?.data ?? response;
+    const iconDataUrls = response?.iconDataUrls || {};
+
+    const emptyStateHtml = `<div class="noobprice-empty" style="text-align:center; padding:28px 20px; background:linear-gradient(135deg, #1e1e2f, #2a2a3d); border:1px solid #3f3f5a; border-radius:12px; color:#9ca3af;">
+      <div style="font-size:32px; margin-bottom:12px;">🔍</div>
+      <div style="font-weight:600; color:#e5e7eb; margin-bottom:8px; font-size:15px;">Nenhuma promoção no momento</div>
+      <div style="font-size:13px; line-height:1.5;">Este jogo não tem ofertas com desconto agora. Vale conferir de novo mais tarde.</div>
+    </div>`;
 
     if (!dados || !Array.isArray(dados) || dados.length === 0) {
-      resultsDiv.textContent = "Nenhuma oferta encontrada no momento.";
+      resultsDiv.innerHTML = emptyStateHtml;
+      const chartEl = document.getElementById('noobprice-chart');
+      if (chartEl) chartEl.style.display = 'none';
       return;
     }
 
     const ofertas = dados[0].deals;
 
     if (!ofertas || ofertas.length === 0) {
-      resultsDiv.textContent = "Nenhuma oferta encontrada no momento.";
+      resultsDiv.innerHTML = emptyStateHtml;
+      const chartEl = document.getElementById('noobprice-chart');
+      if (chartEl) chartEl.style.display = 'none';
       return;
     }
 
@@ -183,7 +218,7 @@ async function buscarOfertasSteam() {
       "Fanatical": "fanatical",
       "Nuuvem": "nuuvem",
       "WinGameStore": "wingamestore",
-      "2game": "2game",
+      "2game": "twogame",
       "PlanetPlay": "planetplay"
     };
 
@@ -197,7 +232,7 @@ async function buscarOfertasSteam() {
       const precoAntigo = oferta.regular.amount.toFixed(2);
       const desconto = oferta.cut;
       const icon = storeIconMap[oferta.shop.name] || 'unknown';
-      const iconUrl = browserAPI.runtime.getURL(`icons/${icon}.png`);
+      const iconUrl = iconDataUrls[icon] || (NOOBPRICE_ICONS_BASE + '/icons/' + icon + '.png');
       return `
         <div class="noobprice-oferta" style="
           background:linear-gradient(135deg, #1e1e2f, #2c2c3f);
@@ -243,7 +278,18 @@ async function buscarOfertasSteam() {
       html += '<div class="noobprice-ofertas-restante" style="display:none">' + restante.map(cardHtml).join('') + '</div>';
       html += '<button type="button" class="noobprice-btn-mostrar-mais" style="width:100%; margin-top:8px; padding:10px; background:#3f3f5a; border:1px solid #4b5563; border-radius:8px; color:#93c5fd; font-size:13px; font-weight:600; cursor:pointer; transition:background 0.2s">Mostrar mais (' + restante.length + ')</button>';
     }
-    resultsDiv.innerHTML = html || "Sem promoções ativas no momento.";
+    if (visiveis.length === 0) {
+      const emptyStateHtml2 = `<div class="noobprice-empty" style="text-align:center; padding:28px 20px; background:linear-gradient(135deg, #1e1e2f, #2a2a3d); border:1px solid #3f3f5a; border-radius:12px; color:#9ca3af;">
+        <div style="font-size:32px; margin-bottom:12px;">🔍</div>
+        <div style="font-weight:600; color:#e5e7eb; margin-bottom:8px; font-size:15px;">Nenhuma promoção no momento</div>
+        <div style="font-size:13px; line-height:1.5;">Este jogo não tem ofertas com desconto agora. Vale conferir de novo mais tarde.</div>
+      </div>`;
+      resultsDiv.innerHTML = emptyStateHtml2;
+      const chartEl = document.getElementById('noobprice-chart');
+      if (chartEl) chartEl.style.display = 'none';
+      return;
+    }
+    resultsDiv.innerHTML = html;
 
     const btnMais = resultsDiv.querySelector('.noobprice-btn-mostrar-mais');
     const divRestante = resultsDiv.querySelector('.noobprice-ofertas-restante');
@@ -256,7 +302,10 @@ async function buscarOfertasSteam() {
 
     const historico = await buscarHistorico(plain);
     const chartEl = document.getElementById('noobprice-chart');
-    if (chartEl && typeof renderPriceChart === 'function') renderPriceChart(chartEl, historico, { height: 120 });
+    if (chartEl) {
+      chartEl.style.display = '';
+      if (typeof renderPriceChart === 'function') renderPriceChart(chartEl, historico, { height: 120 });
+    }
 
   } catch (err) {
     console.error(err);
@@ -282,7 +331,7 @@ async function buscarOfertas(plain) {
     browserAPI.runtime.sendMessage(
       { type: 'buscarOfertas', plain },
       (response) => {
-        if (response?.success) resolve(response.data);
+        if (response?.success) resolve(response);
         else reject(response?.error || 'Erro desconhecido');
       }
     );

@@ -19,6 +19,42 @@ function historicoITADParaChart(lista) {
 
 const API_BASE = 'https://noob-price.vercel.app';
 
+const STORE_ICON_MAP = {
+  "Steam": "steam",
+  "Epic Game Store": "epicgames",
+  "GOG": "gog",
+  "Ubisoft Store": "ubisoft",
+  "Humble Store": "humblestore",
+  "GreenManGaming": "greenmangaming",
+  "GameBillet": "gamebillet",
+  "GamersGate": "gamersgate",
+  "Gamesload": "gamesload",
+  "JoyBuggy": "joybuggy",
+  "GamesPlanet US": "gamesplanet",
+  "GamesPlanet UK": "gamesplanet",
+  "GamesPlanet FR": "gamesplanet",
+  "GamesPlanet DE": "gamesplanet",
+  "IndieGala Store": "indiegala",
+  "Fanatical": "fanatical",
+  "Nuuvem": "nuuvem",
+  "WinGameStore": "wingamestore",
+  "2game": "twogame",
+  "PlanetPlay": "planetplay"
+};
+
+function fetchIconAsDataUrl(slug) {
+  const url = `${API_BASE}/icons/${slug}.png`;
+  return fetch(url)
+    .then(res => res.ok ? res.blob() : Promise.reject(new Error('Icon not found')))
+    .then(blob => new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(r.result);
+      r.onerror = reject;
+      r.readAsDataURL(blob);
+    }))
+    .catch(() => null);
+}
+
 // Listener para buscar ofertas e search (tudo pelo background para evitar CORS/localhost no popup)
 browserAPI.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.type === 'buscarPlain') {
@@ -52,7 +88,15 @@ browserAPI.runtime.onMessage.addListener((request, sender, sendResponse) => {
     })
       .then(res => res.json())
       .then(data => {
-        sendResponse({ success: true, data });
+        const deals = Array.isArray(data) && data[0] && data[0].deals ? data[0].deals : [];
+        const slugs = [...new Set(deals.map(d => STORE_ICON_MAP[d.shop?.name] || 'unknown'))];
+        Promise.all(slugs.map(slug => fetchIconAsDataUrl(slug)))
+          .then(dataUrls => {
+            const iconDataUrls = {};
+            slugs.forEach((slug, i) => { if (dataUrls[i]) iconDataUrls[slug] = dataUrls[i]; });
+            sendResponse({ success: true, data, iconDataUrls });
+          })
+          .catch(() => sendResponse({ success: true, data, iconDataUrls: {} }));
       })
       .catch(err => {
         console.error('Erro no fetch do background:', err);

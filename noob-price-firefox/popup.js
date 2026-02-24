@@ -1,5 +1,6 @@
 // Detecção universal (Chrome: chrome, Firefox: browser)
 const browserAPI = typeof browser !== 'undefined' ? browser : chrome;
+const NOOBPRICE_ICONS_BASE = 'https://noob-price.vercel.app';
 
 // Helpers para APIs assíncronas funcionarem em Chrome (callbacks) e Firefox (Promises)
 function queryTabs(options) {
@@ -37,7 +38,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const resultsDiv = document.getElementById('results');
   const gameTitleEl = document.getElementById('game-title');
   const popupIcon = document.getElementById('popup-icon');
-  if (popupIcon) popupIcon.src = browserAPI.runtime.getURL('icons/icon.png');
+  if (popupIcon) popupIcon.src = browserAPI.runtime.getURL('icon-48.png');
 
   try {
     const tabs = await queryTabs({ active: true, currentWindow: true });
@@ -63,7 +64,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     if (gameTitleEl) gameTitleEl.textContent = nomeDoJogo;
-    resultsDiv.textContent = `Buscando ofertas reais para: ${nomeDoJogo}...`;
+    const skeletonHtml = '<div class="noobprice-skeleton" aria-busy="true" style="display:flex;flex-direction:column;gap:12px;"><div style="display:flex;align-items:center;gap:12px;padding:12px;background:linear-gradient(135deg,#1e1e2f,#2c2c3f);border-radius:12px;"><div style="width:36px;height:36px;border-radius:8px;background:#3f3f5a;"></div><div style="flex:1;"><div style="height:12px;width:70%;margin-bottom:6px;border-radius:4px;background:#3f3f5a;"></div><div style="height:10px;width:50%;border-radius:4px;background:#3f3f5a;"></div></div></div><div style="display:flex;align-items:center;gap:12px;padding:12px;background:linear-gradient(135deg,#1e1e2f,#2c2c3f);border-radius:12px;"><div style="width:36px;height:36px;border-radius:8px;background:#3f3f5a;"></div><div style="flex:1;"><div style="height:12px;width:60%;margin-bottom:6px;border-radius:4px;background:#3f3f5a;"></div><div style="height:10px;width:45%;border-radius:4px;background:#3f3f5a;"></div></div></div><div style="height:100px;border-radius:8px;background:#3f3f5a;"></div></div>';
+    resultsDiv.innerHTML = skeletonHtml;
 
     const plain = await buscarPlainViaBackground(nomeDoJogo);
     if (!plain) {
@@ -78,14 +80,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     const dados = response.data;
+    const iconDataUrls = response.iconDataUrls || {};
+    const emptyStateHtml = '<div class="noobprice-empty" style="text-align:center; padding:24px 16px; background:linear-gradient(135deg, #1e1e2f, #2a2a3d); border:1px solid #3f3f5a; border-radius:12px; color:#9ca3af;"><div style="font-size:28px; margin-bottom:10px;">🔍</div><div style="font-weight:600; color:#e5e7eb; margin-bottom:6px; font-size:14px;">Nenhuma promoção no momento</div><div style="font-size:12px; line-height:1.5;">Este jogo não tem ofertas com desconto agora.</div></div>';
     if (!dados || !Array.isArray(dados) || dados.length === 0) {
-      resultsDiv.textContent = 'Nenhuma oferta encontrada no momento.';
+      resultsDiv.innerHTML = emptyStateHtml;
+      const chartEl = document.getElementById('noobprice-chart');
+      if (chartEl) chartEl.style.display = 'none';
       return;
     }
 
     const ofertas = dados[0].deals;
     if (!ofertas || ofertas.length === 0) {
-      resultsDiv.textContent = 'Nenhuma oferta encontrada no momento.';
+      resultsDiv.innerHTML = emptyStateHtml;
+      const chartEl = document.getElementById('noobprice-chart');
+      if (chartEl) chartEl.style.display = 'none';
       return;
     }
 
@@ -108,7 +116,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       'Fanatical': 'fanatical',
       'Nuuvem': 'nuuvem',
       'WinGameStore': 'wingamestore',
-      '2game': '2game'
+      '2game': 'twogame'
     };
 
     const ofertasFiltradas = ofertas.filter(o => o.cut > 0);
@@ -121,7 +129,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const precoAntigo = oferta.regular.amount.toFixed(2);
       const desconto = oferta.cut;
       const icon = storeIconMap[oferta.shop.name] || 'unknown';
-      const iconUrl = browserAPI.runtime.getURL(`icons/${icon}.png`);
+      const iconUrl = iconDataUrls[icon] || (NOOBPRICE_ICONS_BASE + '/icons/' + icon + '.png');
       return `
         <div class="oferta">
           <img src="${iconUrl}" alt="${oferta.shop.name}" width="36" height="36">
@@ -143,7 +151,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       html += '<div class="ofertas-restante" style="display:none">' + restante.map(cardHtml).join('') + '</div>';
       html += '<button type="button" class="btn-mostrar-mais">Mostrar mais (' + restante.length + ')</button>';
     }
-    resultsDiv.innerHTML = html || 'Sem promoções ativas no momento.';
+    if (visiveis.length === 0) {
+      resultsDiv.innerHTML = emptyStateHtml;
+      const chartEl = document.getElementById('noobprice-chart');
+      if (chartEl) chartEl.style.display = 'none';
+      return;
+    }
+    resultsDiv.innerHTML = html;
 
     const btnMais = resultsDiv.querySelector('.btn-mostrar-mais');
     const divRestante = resultsDiv.querySelector('.ofertas-restante');
@@ -157,7 +171,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     const histRes = await sendMessage({ type: 'buscarHistorico', plain, country: 'BR' });
     const historico = histRes?.data ?? [];
     const chartEl = document.getElementById('noobprice-chart');
-    if (chartEl && typeof renderPriceChart === 'function') renderPriceChart(chartEl, historico, { height: 120 });
+    if (chartEl) {
+      chartEl.style.display = '';
+      if (typeof renderPriceChart === 'function') renderPriceChart(chartEl, historico, { height: 120 });
+    }
   } catch (err) {
     console.error(err);
     resultsDiv.textContent = 'Erro ao buscar os dados.';

@@ -1,9 +1,12 @@
 {
   "manifest_version": 3,
   "name": "NoobPrice",
-  "version": "1.0",
+  "version": "1.2",
   "description": "Compare preços de jogos da Steam automaticamente!",
-  "permissions": ["activeTab", "tabs"],
+  "permissions": [
+    "activeTab",
+    "tabs"
+  ],
   "host_permissions": [
     "http://localhost:3000/*",
     "http://127.0.0.1:3000/*",
@@ -11,8 +14,12 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["icons/*.png"],
-      "matches": ["*://store.steampowered.com/*"]
+      "resources": [
+        "icons/icon.png"
+      ],
+      "matches": [
+        "*://store.steampowered.com/*"
+      ]
     }
   ],
   "background": {
@@ -28,8 +35,14 @@
   },
   "content_scripts": [
     {
-      "matches": ["*://store.steampowered.com/app/*"],
-      "js": ["content.js", "chart.js", "inject-button.js"],
+      "matches": [
+        "*://store.steampowered.com/app/*"
+      ],
+      "js": [
+        "content.js",
+        "chart.js",
+        "inject-button.js"
+      ],
       "run_at": "document_idle"
     }
   ]

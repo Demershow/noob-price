@@ -58,9 +58,10 @@ function renderPriceChart(container, data, options) {
 
   var zoomBar = document.createElement('div');
   zoomBar.className = 'noobprice-chart-zoom';
-  zoomBar.style.cssText = 'display:flex; align-items:center; justify-content:center; margin-top:8px; padding-bottom:12px;';
+  zoomBar.style.cssText = 'display:flex; align-items:center; justify-content:center; margin-top:8px; margin-bottom:16px; padding-bottom:8px;';
   var btnReset = document.createElement('button');
   btnReset.type = 'button';
+  btnReset.setAttribute('aria-label', 'Resetar zoom do gráfico para ver todo o período');
   btnReset.textContent = 'Resetar zoom';
   btnReset.title = 'Ver todo o período';
   btnReset.style.cssText = 'padding:6px 12px; border:none; border-radius:6px; background:#3f3f5a; color:#93c5fd; font-size:11px; cursor:pointer; transition:background 0.2s;';
