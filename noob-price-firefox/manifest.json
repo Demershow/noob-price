@@ -1,0 +1,40 @@
+{
+  "manifest_version": 2,
+  "name": "NoobPrice",
+  "version": "1.0",
+  "description": "Compare preços de jogos da Steam automaticamente!",
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "storage",
+    "http://localhost:3000/*",
+    "https://api.isthereanydeal.com/*",
+    "<all_urls>"
+  ],
+  "web_accessible_resources": ["icons/*.png"],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon.png",
+      "48": "icons/icon.png",
+      "128": "icons/icon.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://store.steampowered.com/app/*"],
+      "js": ["content.js", "chart.js", "inject-button.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "noobprice@seusite.com",
+      "strict_min_version": "91.0"
+    }
+  }
+}
